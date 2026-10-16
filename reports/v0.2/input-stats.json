@@ -1,0 +1,14 @@
+{
+  "L1": {
+    "messages": 211,
+    "characters": 15790,
+    "bytes": 44786,
+    "sha256": "65b17c886250aa69ac262e50d8fca948eb6352f8ab720fb80d61f02c6db5b6d6"
+  },
+  "L2": {
+    "messages": 211,
+    "characters": 15665,
+    "bytes": 44545,
+    "sha256": "e71ff5db1f4545200ca8a03551f6f1280da7a30b3f625ddd87387b3e187ad681"
+  }
+}

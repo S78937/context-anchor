@@ -1,0 +1,33 @@
+{
+  "date": "2026-10-16",
+  "cases": 2,
+  "messages_per_case": 211,
+  "total_input_characters": 31455,
+  "constraints": 48,
+  "runs_per_condition": 1,
+  "checkpoint_characters": {
+    "baseline": 1513,
+    "v1": 3221,
+    "v2": 1542
+  },
+  "scores": {
+    "baseline": {
+      "checkpoints": "48/48",
+      "resumed": "48/48"
+    },
+    "v1": {
+      "checkpoints": "48/48",
+      "resumed": "48/48"
+    },
+    "v2": {
+      "checkpoints": "48/48",
+      "resumed": "48/48"
+    }
+  },
+  "v2_reduction_vs_v1_percent": 52.12666873641727,
+  "v2_increase_vs_baseline_percent": 1.9167217448777363,
+  "openclaw_native_tested": false,
+  "context_saturation_tested": false,
+  "same_model_within_experiment": true,
+  "independent_human_grading": false
+}

@@ -1,0 +1,20 @@
+{
+  "v1": {
+    "LICENSE": "2baf0968b62b46cf487bf666be21fcf3f9133e1f224a6930195c12f27c67192a",
+    "README.md": "d94e6222ffb71f87d2697246814162eb75a8a644f608a46efdb3918842ba9e63",
+    ".gitignore": "5928c508f303adb6830c82f38c977fb534a55e7dd867382b346090b0b7d2f803",
+    "EVALUATION.md": "3abff2f3f963d46b5e47f756af7a1699e2a03fe071fb1ba56948e48326fb4c02",
+    "references/example.md": "e034d26748beb14e7c73d6c7e4be39797eba4233121e49f0722b9442ebf7133b",
+    "references/checkpoint-template.md": "e11b15a319020a7a6ee7c724ee99a72ee4fd7e64784ea23edf1319b229325de2",
+    "SKILL.snapshot.md": "81f74980c239669218bb6f0a90317a739e2c454b0bcffaa104342e03f1ca3780"
+  },
+  "v2": {
+    "LICENSE": "2baf0968b62b46cf487bf666be21fcf3f9133e1f224a6930195c12f27c67192a",
+    "README.md": "d94e6222ffb71f87d2697246814162eb75a8a644f608a46efdb3918842ba9e63",
+    ".gitignore": "5928c508f303adb6830c82f38c977fb534a55e7dd867382b346090b0b7d2f803",
+    "EVALUATION.md": "3abff2f3f963d46b5e47f756af7a1699e2a03fe071fb1ba56948e48326fb4c02",
+    "references/example.md": "84a8bad26177a8b66887587e814ea5fda9b919aa0d56024e53e14328721a8135",
+    "references/checkpoint-template.md": "71d16d7e7f6bd1bb873db316be4d869fb65bcc4844f533dea490a4dc92428871",
+    "SKILL.snapshot.md": "c2e1df3a4dfb6ffe33759a0b5a091e1f9f8018345ba06564d3dea657794f2658"
+  }
+}

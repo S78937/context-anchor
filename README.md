@@ -1,5 +1,7 @@
 # Context Anchor｜让 AI 接得上之前的要求
 
+当前版本：**v0.2 · 精简接续**。[下载安装包](https://github.com/S78937/context-anchor/releases/tag/v0.2) · [完整测试报告](https://github.com/S78937/context-anchor/blob/v0.2/reports/v0.2/长对话测试报告.md)
+
 一个用于保存和恢复任务上下文的通用 Agent Skill。适合长对话、阶段交接和换聊天继续工作。核心流程是：提取关键要求 → 保存接续记录 → 恢复时核对 → 交付前逐项检查。
 
 它帮助降低遗漏，不是模型长期记忆插件；不能扩展上下文窗口、恢复没有提供的聊天历史，或保证 AI 永远不忘。没有后台服务、API 调用、遥测或自动同步。
@@ -18,7 +20,7 @@
 
 ## 安装
 
-下载本仓库，将包含 `SKILL.md` 的整个文件夹命名为 `context-anchor`，复制到宿主的 Skill 目录。下列 `~` 表示你的用户主目录：
+优先下载 Release 中的 `context-anchor-v0.2.zip` 并解压，将包含 `SKILL.md` 的文件夹 `context-anchor` 复制到宿主的 Skill 目录。仓库内 `reports/` 是测试证据，无需随 Skill 安装。下列 `~` 表示你的用户主目录：
 
 | 宿主 | 常见个人安装位置 | 注意 |
 | --- | --- | --- |
@@ -29,7 +31,7 @@
 
 本项目只使用通用 Markdown 规则，不绑定某个 API 或命令名称。有文件工具时可持久化，没有时可复制记录。自动选用取决于宿主；需要可靠接续时显式调用并提供记录。
 
-兼容性状态：已检查 Skill 结构；尚未在 OpenClaw 或其他独立客户端实机验证，不承诺所有平台即装即用。
+兼容性状态：已检查 Skill 结构并完成两段长对话的三组接续测试，详见 [TEST_RESULTS.md](TEST_RESULTS.md)。尚未在 OpenClaw 原生环境安装验证，不承诺所有平台即装即用。
 
 ## 文件说明
 
@@ -38,6 +40,7 @@
 - `references/example.md`：虚构的用户修正示例。
 - `EVALUATION.md`：手动行为验收场景与已完成检查。
 - `LICENSE`：MIT 许可证。
+- `TEST_RESULTS.md`：本轮精简和长对话测试结果及限制。
 
 ## 记录与隐私
 
@@ -58,6 +61,11 @@
 
 - [Agent Skills 格式规范](https://agentskills.io/specification)
 - [OpenClaw Skills 文档](https://docs.openclaw.ai/skills)
+
+## 版本历史
+
+- [v0.2](https://github.com/S78937/context-anchor/releases/tag/v0.2)：合并重复字段、使用紧凑记录，附长对话三组对照测试；本轮记录较原版缩短52.1%，三组均符合48/48项要求。
+- [v0.1](https://github.com/S78937/context-anchor/tree/v0.1)：原始版，完整提交历史保留。
 
 ## License
 
