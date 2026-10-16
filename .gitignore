@@ -1,0 +1,9 @@
+# Runtime task records must not be published
+.context-anchor/
+.context-anchor-backups/
+.env
+.env.*
+!.env.example
+.DS_Store
+__pycache__/
+*.pyc
