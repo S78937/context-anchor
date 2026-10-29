@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>context-anchor · 演示</title>
+<meta name="description" content="AI 会忘事，所以我给它写了张纸条。context-anchor 的演示。">
+<style>
+  :root{
+    --paper:#FBFAF7;
+    --ink:#1B1B1B;
+    --muted:#78726A;
+    --rule:#E3DED5;
+    --accent:#2C6E5F;
+    --accent-soft:#F0F3F1;
+    --warn:#A8503A;
+  }
+  *{box-sizing:border-box}
+  body{
+    margin:0; background:var(--paper); color:var(--ink);
+    font-family:"Microsoft YaHei Light","Microsoft YaHei","Noto Sans SC",system-ui,sans-serif;
+    font-size:15px; line-height:1.8; -webkit-font-smoothing:antialiased;
+    overflow-wrap:anywhere;
+  }
+  .page{max-width:720px;margin:0 auto;padding:52px 24px 76px}
+  .mono{font-family:"Cascadia Mono",Consolas,"Courier New",monospace}
+
+  .topline{font-family:"Cascadia Mono",Consolas,monospace;font-size:12.5px;color:var(--muted);margin:0 0 14px}
+  h1{font-size:26px;line-height:1.45;margin:0 0 12px;font-weight:600}
+  .lede{font-size:15px;color:#3A3630;margin:0}
+  hr{border:0;border-top:1px solid var(--rule);margin:34px 0}
+
+  h2{font-size:15px;font-weight:600;margin:0 0 10px;display:flex;align-items:baseline;gap:10px}
+  h2 .num{font-family:"Cascadia Mono",Consolas,monospace;font-size:12px;color:var(--muted);font-weight:400}
+  .cap{font-size:13.5px;color:var(--muted);line-height:1.85;margin:0 0 10px}
+  .cap b{color:#3A3630;font-weight:600}
+  .cap:last-child{margin-bottom:0}
+
+  /* 演示 */
+  .chat{margin:16px 0 0}
+  .msg{margin:0 0 15px}
+  .who{font-family:"Cascadia Mono",Consolas,monospace;font-size:11.5px;color:var(--muted);margin-bottom:2px}
+  .bub{border-left:2px solid var(--rule);padding:1px 0 1px 13px;font-size:14.5px;white-space:pre-wrap}
+  .msg.u .bub{border-color:#DAD5CA}
+  .msg.a .bub{border-color:#BFC8C3}
+  .msg.s .bub{border-color:var(--accent);background:var(--accent-soft);padding:11px 14px}
+  .msg.a .b b,.msg.s .b b{font-weight:600}
+  .side{font-size:13px;color:var(--muted);font-style:italic;margin:0 0 14px;padding-left:13px;border-left:2px solid var(--rule);min-height:1.2em}
+  .ctrls{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:16px}
+  button{
+    font:inherit;font-size:13.5px;padding:6px 16px;cursor:pointer;
+    background:#fff;color:var(--ink);border:1px solid #CFC9BE;border-radius:2px;
+  }
+  button:hover:not(:disabled){background:#F1EEE7}
+  button:disabled{opacity:.45;cursor:default}
+  .stage{font-family:"Cascadia Mono",Consolas,monospace;font-size:12px;color:var(--muted)}
+  .typing span{display:inline-block;width:5px;height:5px;border-radius:50%;background:#B5AFA4;margin-right:4px;animation:bl 1.2s infinite}
+  .typing span:nth-child(2){animation-delay:.2s}
+  .typing span:nth-child(3){animation-delay:.4s}
+  @keyframes bl{0%,60%,100%{opacity:.25}30%{opacity:1}}
+
+  /* 接续记录 */
+  .ck{
+    background:#F5F2EB;border-left:2px solid var(--ink);padding:14px 16px;
+    font-family:"Cascadia Mono",Consolas,"Courier New",monospace;
+    font-size:12.5px;line-height:1.9;white-space:pre-wrap;overflow-x:auto;
+  }
+  .ck .h{font-weight:700}
+
+  /* 表格 */
+  .tw{overflow-x:auto}
+  table{border-collapse:collapse;width:100%;font-size:13.5px;margin:4px 0 12px}
+  th,td{text-align:left;padding:7px 12px 7px 0;border-bottom:1px solid var(--rule);vertical-align:top}
+  th{font-weight:600;color:var(--muted);font-size:12.5px}
+  td.n,th.n{font-family:"Cascadia Mono",Consolas,monospace;white-space:nowrap}
+
+  @media(max-width:640px){
+    .page{padding:30px 16px 56px}
+    body{font-size:14.5px}
+    h1{font-size:23px}
+    .tw table{min-width:430px}
+    th,td{padding:6px 10px 6px 0}
+    .ck{font-size:11.5px;padding:12px 13px}
+    code{font-size:12px}
+  }
+
+  /* 步骤 */
+  ol{margin:0 0 12px;padding-left:22px}
+  ol li{margin:6px 0;font-size:14.5px}
+  ol li b{font-weight:600}
+  code{font-family:"Cascadia Mono",Consolas,monospace;font-size:12.5px;background:#F0EDE6;padding:1px 5px;border-radius:2px}
+  a{color:var(--accent);text-decoration:underline;text-underline-offset:2px}
+  a:hover{color:#1F5348}
+  .foot{font-size:12.5px;color:var(--muted);margin:30px 0 0}
+</style>
+</head>
+<body>
+<div class="page">
+
+  <header>
+    <p class="topline">context-anchor &nbsp;·&nbsp; v0.2 &nbsp;·&nbsp; MIT</p>
+    <h1>AI 会忘事，所以我给它写了张纸条</h1>
+    <p class="lede">
+      长对话换个窗口、隔天接着干的时候，AI 会把你早就说过的事忘掉。下面这段是实拍：第一幕它忘干净，
+      第二幕和第三幕用的是同一个仓库里的接续记录（<code>references/example.md</code> 里的虚构例子）。
+    </p>
+  </header>
+
+  <hr>
+
+  <section>
+    <h2><span class="num">01</span>演示</h2>
+    <p class="cap">分三段：先看它怎么忘，再看它怎么被记下来，最后看它怎么接回去。</p>
+
+    <div class="chat" id="chat"></div>
+    <p class="side" id="side">&nbsp;</p>
+
+    <div class="ctrls">
+      <button id="play">播放</button>
+      <button id="reset">重放</button>
+      <span class="stage" id="stage">待播放</span>
+    </div>
+  </section>
+
+  <hr>
+
+  <section>
+    <h2><span class="num">02</span>接续记录</h2>
+    <div class="ck" id="ck">（播放到第二幕，这里会显示 Context Anchor 生成的那份文件）</div>
+    <p class="cap" style="margin-top:10px">
+      格式抄自 <code>references/checkpoint-template.md</code>，内容是 <code>references/example.md</code> 里的虚构例子。
+    </p>
+    <p class="cap">
+      这东西存下来就是一个普通文件。没有后台服务，没有 API 调用，不上报任何数据。
+      下次新开对话把它贴过去，AI 就能对着它一条条核对，不用再猜。
+    </p>
+  </section>
+
+  <hr>
+
+  <section>
+    <h2><span class="num">03</span>这轮测出来什么</h2>
+    <div class="tw">
+    <table>
+      <thead>
+        <tr><th> </th><th class="n">普通提示</th><th class="n">原版</th><th class="n">v0.2</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>记录长度</td><td class="n">1513 字符</td><td class="n">3221 字符</td><td class="n">1542 字符</td></tr>
+        <tr><td>48 条约束 · 记录阶段</td><td class="n">48/48</td><td class="n">48/48</td><td class="n">48/48</td></tr>
+        <tr><td>48 条约束 · 恢复阶段</td><td class="n">48/48</td><td class="n">48/48</td><td class="n">48/48</td></tr>
+      </tbody>
+    </table>
+    </div>
+    <p class="cap">
+      v0.2 用了两段各 211 条消息、合计 31,455 字符的虚构长对话，三组各跑一次，
+      新会话只凭那份记录恢复成稿。
+    </p>
+    <p class="cap">
+      说清楚：<b>三组都 48/48，说明这轮没测出 v0.2 比普通提示更准</b>——三条都撞天花板了。
+      唯一测出来的差别是记录短了 52.1%。样本小，评分是我自己打的，没做盲审，
+      也没在 OpenClaw 原生环境装过。这些都写在仓库的 <code>TEST_RESULTS.md</code> 里。
+    </p>
+  </section>
+
+  <hr>
+
+  <section>
+    <h2><span class="num">04</span>怎么用</h2>
+    <ol>
+      <li>下载 <a href="https://github.com/S78937/context-anchor/releases/tag/v0.2" target="_blank" rel="noopener">v0.2 Release</a>，把 <code>context-anchor</code> 文件夹放进 <code>~/.codex/skills/</code> 或 <code>~/.openclaw/skills/</code></li>
+      <li>当前对话里说：<b>「使用 context-anchor：把当前任务的目标、硬性要求、我后来的修正和未完成事项整理成接续记录」</b></li>
+      <li>开一个新对话，把记录发过去，说：<b>「使用 context-anchor：读取这份接续记录，核对仍有效的要求，接着完成下一步」</b></li>
+    </ol>
+    <p class="cap">
+      仓库 <a href="https://github.com/S78937/context-anchor" target="_blank" rel="noopener">github.com/S78937/context-anchor</a>
+      ｜ MIT ｜ 附完整测试报告和原始证据包
+    </p>
+  </section>
+
+  <p class="foot">演示对话是仓库里的虚构例子，测试数字来自 v0.2 的公开测试报告。</p>
+
+</div>
+
+<script>
+const chat   = document.getElementById('chat');
+const ckBox  = document.getElementById('ck');
+const sideEl = document.getElementById('side');
+const stageEl= document.getElementById('stage');
+const playBtn= document.getElementById('play');
+const resetBtn=document.getElementById('reset');
+
+const CK = `# 入门指南 | v1
+目标：制作新手指南。来源：本轮U1—U2；U数字=用户消息。
+要求：R1 中文；R2 三章 [U1]；R3 不含编程；R4 交付Markdown，不要PDF [U2]。
+状态：助手声称已完成，未提供产物，尚未核实。
+下一步：如有成稿先核对，否则起草。未授权发布。`;
+
+const CK_PLACEHOLDER = '（播放到第二幕，这里会显示 Context Anchor 生成的那份文件）';
+
+const SCRIPT = [
+  {who:'u', whoName:'你', stage:'还没装',
+   note:'它答应得很快，四条要求一条没记住。',
+   text:`帮我写一份「入门指南」，要求：
+① 用中文 ② 分三章 ③ 含编程示例 ④ 交付 PDF。`},
+
+  {who:'a', whoName:'AI', stage:'还没装',
+   text:`好的，我来写。
+
+# Getting Started Guide
+
+## Chapter 1. Setup
+    npm install guide
+    然后启动。
+
+## Chapter 2. Usage
+    打开终端，运行 guide start。
+
+（Markdown 文件，第三章节没有）`},
+
+  {who:'u', whoName:'你', stage:'还没装',
+   note:'四条全丢：英文、两章、没代码、交的还是 Markdown。',
+   text:`我刚才明明说了要用中文、分三章、含编程、交付 PDF 啊。
+你这英文的、就两章、代码也没有、交的还是 Markdown。`},
+
+  {who:'a', whoName:'AI', stage:'还没装',
+   text:`抱歉，是我的问题。我这就改：改成中文、补成三章、加上编程示例、导出成 PDF。`},
+
+  {who:'a', whoName:'AI', stage:'还没装',
+   note:'它又忘了一次——上一条对话已经滑出窗口，它根本看不见。',
+   text:`《入门指南》已更新。
+
+# Getting Started Guide
+
+## Chapter 1. Setup
+    npm install guide
+
+## Chapter 2. Usage
+    guide start
+
+（还是英文，还是两章）`},
+
+  {who:'u', whoName:'你', stage:'装上之后',
+   note:'接续记录只留当前还算数的要求，并且把「说过完成但没有产物」标出来。',
+   text:`使用 context-anchor：把当前任务的目标、硬性要求、我后来的修正和未完成事项整理成接续记录。`},
+
+  {who:'s', whoName:'context-anchor', stage:'装上之后',
+   text:`整理好了，只留当前还算数的：
+
+· R1 中文
+· R2 三章 [U1]
+· R3 不含编程
+· R4 交付 Markdown，不要 PDF [U2]
+· 状态：助手声称已完成，未提供产物，尚未核实
+· 下一步：如有成稿先核对，否则起草。未授权发布
+
+存在 .context-anchor/入门指南.md`},
+
+  {ck:true, stage:'装上之后'},
+
+  {who:'u', whoName:'你', stage:'换了个新会话',
+   note:'新会话看不到旧对话，但它能看到那张纸条。',
+   text:`使用 context-anchor：读取这份接续记录，核对仍有效的要求，接着完成下一步。`},
+
+  {who:'s', whoName:'context-anchor', stage:'换了个新会话',
+   text:`读进来了，先对着记录核一遍：
+
+✓ R1 中文      ✓ R2 三章
+✓ R3 不含编程（这条是 U2 改的，不是 U1）
+✓ R4 交付 Markdown，不要 PDF
+
+状态那一条还写着"助手声称已完成，未提供产物"，所以当没完成。
+下一步：先找成稿核对，找不到就重新起草。`},
+
+  {who:'a', whoName:'AI（新会话）', stage:'换了个新会话',
+   text:`好，按记录来。
+
+《入门指南》，中文，三章，不含编程示例，交付 Markdown 文件。`}
+];
+
+let i = 0, timer = null;
+
+function bubble(item){
+  const wrap = document.createElement('div');
+  wrap.className = 'msg ' + item.who;
+  const who = document.createElement('div');
+  who.className = 'who'; who.textContent = item.whoName || item.who;
+  const bub = document.createElement('div');
+  bub.className = 'bub b'; bub.innerHTML = item.text;
+  wrap.appendChild(who); wrap.appendChild(bub);
+  chat.appendChild(wrap);
+  chat.scrollTop = chat.scrollHeight;
+}
+
+function typing(){
+  const wrap = document.createElement('div');
+  wrap.className = 'msg a';
+  wrap.innerHTML = '<div class="who">AI</div><div class="bub typing"><span></span><span></span><span></span></div>';
+  chat.appendChild(wrap);
+  return wrap;
+}
+
+function step(){
+  timer = null;
+  if (i >= SCRIPT.length){
+    stageEl.textContent = '放完了';
+    playBtn.textContent = '放完了'; playBtn.disabled = true;
+    return;
+  }
+  const item = SCRIPT[i++];
+  stageEl.textContent = item.stage;
+  if (item.note) sideEl.textContent = item.note;
+  if (item.ck){
+    ckBox.innerHTML = CK.replace(/^(#.*)$/gm,'<span class="h">$1</span>');
+    timer = setTimeout(step, 900);
+    return;
+  }
+  const t = typing();
+  timer = setTimeout(() => {
+    if (t && t.remove) t.remove();
+    bubble(item);
+    timer = setTimeout(step, item.who === 'u' ? 700 : 1600);
+  }, 900);
+}
+
+playBtn.addEventListener('click', () => {
+  if (timer) return;
+  playBtn.disabled = true; playBtn.textContent = '播放中';
+  step();
+});
+
+resetBtn.addEventListener('click', () => {
+  if (timer){ clearTimeout(timer); timer = null; }
+  i = 0; chat.innerHTML = '';
+  ckBox.textContent = CK_PLACEHOLDER;
+  sideEl.innerHTML = '&nbsp;';
+  stageEl.textContent = '待播放';
+  playBtn.disabled = false; playBtn.textContent = '播放';
+});
+
+// 静态截图用：?all=1 一次性铺满全部对话
+if (location.search.indexOf('all=1') !== -1){
+  SCRIPT.forEach(it => {
+    if (it.ck) ckBox.innerHTML = CK.replace(/^(#.*)$/gm,'<span class="h">$1</span>');
+    else bubble(it);
+  });
+  const last = SCRIPT.filter(x => x.note).slice(-1)[0];
+  if (last) sideEl.textContent = last.note;
+  stageEl.textContent = '放完了';
+  playBtn.textContent = '放完了'; playBtn.disabled = true;
+}
+
+// 分段截图用：?top=1250 把页面上移 N 像素，露出下面一段
+var tp = new URLSearchParams(location.search).get('top');
+if (tp) {
+  var applyTop = function(){ document.body.style.marginTop = (-(parseInt(tp, 10) || 0)) + 'px'; };
+  applyTop();
+  window.addEventListener('load', applyTop);
+  setTimeout(applyTop, 120);
+}
+</script>
+</body>
+</html>
